@@ -1,20 +1,17 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
 import MainFeature from '../components/MainFeature'
 import ApperIcon from '../components/ApperIcon'
+import { useDarkMode } from '../App'
+
 
 const Home = () => {
-  const [darkMode, setDarkMode] = useState(false)
+  const { darkMode, toggleDarkMode } = useDarkMode()
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.classList.toggle('dark')
-  }
 
-  return (
-    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
+    <div className="min-h-screen transition-colors duration-300">
       {/* Navigation Header */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-surface-200 sticky top-0 z-50">
+      <nav className="bg-white/80 dark:bg-surface-900/80 backdrop-blur-md border-b border-surface-200 dark:border-surface-700 sticky top-0 z-50">
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -32,35 +29,37 @@ const Home = () => {
 
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#shop" className="text-surface-700 hover:text-primary transition-colors">Shop</a>
-              <a href="#categories" className="text-surface-700 hover:text-primary transition-colors">Categories</a>
-              <a href="#about" className="text-surface-700 hover:text-primary transition-colors">About</a>
-              <a href="#contact" className="text-surface-700 hover:text-primary transition-colors">Contact</a>
+              <a href="#shop" className="text-surface-700 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light transition-colors">Shop</a>
+              <a href="#categories" className="text-surface-700 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light transition-colors">Categories</a>
+              <a href="#about" className="text-surface-700 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light transition-colors">About</a>
+              <a href="#contact" className="text-surface-700 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light transition-colors">Contact</a>
+
             </div>
 
             {/* Right Side Icons */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={toggleDarkMode}
-                className="p-2 rounded-xl bg-surface-100 hover:bg-surface-200 transition-colors"
+                className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+                aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
               >
-                <ApperIcon name={darkMode ? 'Sun' : 'Moon'} className="w-5 h-5" />
+                <ApperIcon name={darkMode ? 'Sun' : 'Moon'} className="w-5 h-5 text-surface-700 dark:text-surface-300" />
+
+              <button className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors relative">
+                <ApperIcon name="Search" className="w-5 h-5 text-surface-700 dark:text-surface-300" />
               </button>
-              <button className="p-2 rounded-xl bg-surface-100 hover:bg-surface-200 transition-colors relative">
-                <ApperIcon name="Search" className="w-5 h-5" />
-              </button>
-              <button className="p-2 rounded-xl bg-surface-100 hover:bg-surface-200 transition-colors relative">
-                <ApperIcon name="Heart" className="w-5 h-5" />
+              <button className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors relative">
+                <ApperIcon name="Heart" className="w-5 h-5 text-surface-700 dark:text-surface-300" />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-white text-xs rounded-full flex items-center justify-center">
                   0
                 </span>
               </button>
-              <button className="p-2 rounded-xl bg-surface-100 hover:bg-surface-200 transition-colors relative">
-                <ApperIcon name="ShoppingBag" className="w-5 h-5" />
+              <button className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors relative">
+                <ApperIcon name="ShoppingBag" className="w-5 h-5 text-surface-700 dark:text-surface-300" />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-white text-xs rounded-full flex items-center justify-center">
                   0
                 </span>
-              </button>
+
             </div>
           </div>
         </div>
@@ -71,7 +70,8 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <motion.h1 
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-surface-900 mb-6"
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold text-surface-900 dark:text-surface-100 mb-6"
+
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -80,7 +80,8 @@ const Home = () => {
               <span className="block text-gradient">Starts Here</span>
             </motion.h1>
             <motion.p 
-              className="text-lg sm:text-xl text-surface-600 max-w-3xl mx-auto mb-8"
+              className="text-lg sm:text-xl text-surface-600 dark:text-surface-400 max-w-3xl mx-auto mb-8"
+
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -118,12 +119,14 @@ const Home = () => {
               { number: '50+', label: 'Partner Stores', icon: 'Store' },
               { number: '99%', label: 'Satisfaction', icon: 'Heart' }
             ].map((stat, index) => (
-              <div key={index} className="text-center p-6 card hover:shadow-card transition-shadow">
+              <div key={index} className="text-center p-6 card dark:bg-surface-800 dark:border-surface-700 hover:shadow-card transition-shadow">
+
                 <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-xl flex items-center justify-center mx-auto mb-4">
                   <ApperIcon name={stat.icon} className="w-6 h-6 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-surface-900 mb-1">{stat.number}</div>
-                <div className="text-surface-600 text-sm">{stat.label}</div>
+                <div className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-1">{stat.number}</div>
+                <div className="text-surface-600 dark:text-surface-400 text-sm">{stat.label}</div>
+
               </div>
             ))}
           </motion.div>
@@ -134,13 +137,16 @@ const Home = () => {
       <MainFeature />
 
       {/* Categories Section */}
-      <section id="categories" className="py-16 bg-surface-50">
+      <section id="categories" className="py-16 bg-surface-50 dark:bg-surface-900">
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-surface-900 mb-4">
+            <h2 className="text-3xl sm:text-4xl font-bold text-surface-900 dark:text-surface-100 mb-4">
               Shop by Category
+
             </h2>
-            <p className="text-lg text-surface-600 max-w-2xl mx-auto">
+            <p className="text-lg text-surface-600 dark:text-surface-400 max-w-2xl mx-auto">
+
               From vintage denim to designer accessories, find your perfect style match
             </p>
           </div>
@@ -156,7 +162,8 @@ const Home = () => {
             ].map((category, index) => (
               <motion.div
                 key={index}
-                className="card p-6 text-center cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1"
+                className="card dark:bg-surface-800 dark:border-surface-700 p-6 text-center cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1"
+
                 whileHover={{ scale: 1.05 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -165,8 +172,9 @@ const Home = () => {
                 <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <ApperIcon name={category.icon} className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="font-semibold text-surface-900 mb-1">{category.name}</h3>
-                <p className="text-sm text-surface-600">{category.count}</p>
+                <h3 className="font-semibold text-surface-900 dark:text-surface-100 mb-1">{category.name}</h3>
+                <p className="text-sm text-surface-600 dark:text-surface-400">{category.count}</p>
+
               </motion.div>
             ))}
           </div>
@@ -174,7 +182,8 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-surface-900 text-white py-12">
+      <footer className="bg-surface-900 dark:bg-surface-950 text-white py-12">
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -184,12 +193,14 @@ const Home = () => {
                 </div>
                 <span className="text-2xl font-bold">ThriftVibe</span>
               </div>
-              <p className="text-surface-400 mb-4">
+              <p className="text-surface-400 dark:text-surface-500 mb-4">
                 Making sustainable fashion accessible to everyone, one vintage piece at a time.
+
               </p>
               <div className="flex space-x-4">
                 {['Facebook', 'Twitter', 'Instagram', 'Youtube'].map((social) => (
-                  <button key={social} className="w-10 h-10 bg-surface-800 rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
+                  <button key={social} className="w-10 h-10 bg-surface-800 dark:bg-surface-700 rounded-xl flex items-center justify-center hover:bg-primary transition-colors">
+
                     <ApperIcon name={social} className="w-5 h-5" />
                   </button>
                 ))}
@@ -198,7 +209,8 @@ const Home = () => {
             
             <div>
               <h3 className="font-semibold mb-4">Shop</h3>
-              <ul className="space-y-2 text-surface-400">
+              <ul className="space-y-2 text-surface-400 dark:text-surface-500">
+
                 <li><a href="#" className="hover:text-white transition-colors">New Arrivals</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Best Sellers</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Sale</a></li>
@@ -208,7 +220,8 @@ const Home = () => {
             
             <div>
               <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-surface-400">
+              <ul className="space-y-2 text-surface-400 dark:text-surface-500">
+
                 <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Shipping</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
@@ -218,12 +231,14 @@ const Home = () => {
             
             <div>
               <h3 className="font-semibold mb-4">Newsletter</h3>
-              <p className="text-surface-400 mb-4">Get updates on new arrivals and exclusive offers</p>
+              <p className="text-surface-400 dark:text-surface-500 mb-4">Get updates on new arrivals and exclusive offers</p>
+
               <div className="flex">
                 <input 
                   type="email" 
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 bg-surface-800 border border-surface-700 rounded-l-xl focus:outline-none focus:border-primary"
+                  className="flex-1 px-4 py-2 bg-surface-800 dark:bg-surface-700 border border-surface-700 dark:border-surface-600 rounded-l-xl focus:outline-none focus:border-primary text-white placeholder-surface-400"
+                />
+
                 />
                 <button className="px-4 py-2 bg-primary rounded-r-xl hover:bg-primary-dark transition-colors">
                   <ApperIcon name="Send" className="w-5 h-5" />
@@ -232,7 +247,8 @@ const Home = () => {
             </div>
           </div>
           
-          <div className="border-t border-surface-800 pt-8 mt-8 text-center text-surface-400">
+          <div className="border-t border-surface-800 dark:border-surface-700 pt-8 mt-8 text-center text-surface-400 dark:text-surface-500">
+
             <p>&copy; 2024 ThriftVibe. All rights reserved.</p>
           </div>
         </div>

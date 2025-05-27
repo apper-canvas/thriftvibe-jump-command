@@ -18,23 +18,28 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-primary-dark transition-colors duration-200 shadow-card;
+    @apply bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-primary-dark dark:bg-primary-light dark:hover:bg-primary transition-colors duration-200 shadow-card;
+
   }
   
   .btn-secondary {
-    @apply bg-secondary text-white px-6 py-3 rounded-xl font-medium hover:bg-secondary-dark transition-colors duration-200 shadow-card;
+    @apply bg-secondary text-white px-6 py-3 rounded-xl font-medium hover:bg-secondary-dark dark:bg-secondary-light dark:hover:bg-secondary transition-colors duration-200 shadow-card;
+
   }
   
   .btn-outline {
-    @apply border-2 border-primary text-primary px-6 py-3 rounded-xl font-medium hover:bg-primary hover:text-white transition-colors duration-200;
+    @apply border-2 border-primary text-primary px-6 py-3 rounded-xl font-medium hover:bg-primary hover:text-white dark:border-primary-light dark:text-primary-light dark:hover:bg-primary-light dark:hover:text-surface-900 transition-colors duration-200;
+
   }
   
   .card {
-    @apply bg-white rounded-2xl shadow-soft border border-surface-100 overflow-hidden;
+    @apply bg-white dark:bg-surface-800 rounded-2xl shadow-soft border border-surface-100 dark:border-surface-700 overflow-hidden;
+
   }
   
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl border border-surface-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors;
+    @apply w-full px-4 py-3 rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-100 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors;
+
   }
   
   .badge {
@@ -65,16 +70,19 @@
   width: 8px;
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-surface-100;
+:::-webkit-scrollbar-track {
+  @apply bg-surface-100 dark:bg-surface-800;
+
 }
 
-::-webkit-scrollbar-thumb {
-  @apply bg-surface-300 rounded-full;
+:::-webkit-scrollbar-thumb {
+  @apply bg-surface-300 dark:bg-surface-600 rounded-full;
+
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-surface-400;
+:::-webkit-scrollbar-thumb:hover {
+  @apply bg-surface-400 dark:bg-surface-500;
+
 }
 
 /* Loading animation */

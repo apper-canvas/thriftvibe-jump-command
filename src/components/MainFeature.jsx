@@ -723,8 +723,6 @@ const MainFeature = () => {
               {cart.reduce((total, item) => total + item.quantity, 0)}
             </span>
           </motion.button>
-          </motion.button>
-
 
 
 

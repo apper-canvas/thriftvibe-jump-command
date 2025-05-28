@@ -992,7 +992,6 @@ const MainFeature = () => {
           )}
         </AnimatePresence>
 
-        )}
       </div>
     </section>
   )

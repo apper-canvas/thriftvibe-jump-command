@@ -12,6 +12,18 @@ const MainFeature = () => {
   const [showCart, setShowCart] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+  const [searchResults, setSearchResults] = useState([])
+  const [searchFilters, setSearchFilters] = useState({
+    category: 'all',
+    minPrice: '',
+    maxPrice: '',
+    condition: [],
+    brand: ''
+  })
+  const [isSearching, setIsSearching] = useState(false)
+
   const [isLoading, setIsLoading] = useState(true)
 
   // Mock product data
@@ -182,6 +194,79 @@ const MainFeature = () => {
     setShowCheckout(false)
     setShowCart(false)
   }
+
+  const handleSearch = () => {
+    if (!searchQuery.trim() && searchFilters.category === 'all' && !searchFilters.minPrice && !searchFilters.maxPrice && searchFilters.condition.length === 0 && !searchFilters.brand) {
+      setSearchResults(products)
+      return
+    }
+
+    setIsSearching(true)
+    
+    setTimeout(() => {
+      let filtered = products.filter(product => {
+        // Text search
+        const matchesText = !searchQuery.trim() || 
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.category.toLowerCase().includes(searchQuery.toLowerCase())
+
+        // Category filter
+        const matchesCategory = searchFilters.category === 'all' || product.category === searchFilters.category
+
+        // Price filter
+        const matchesMinPrice = !searchFilters.minPrice || product.price >= parseFloat(searchFilters.minPrice)
+        const matchesMaxPrice = !searchFilters.maxPrice || product.price <= parseFloat(searchFilters.maxPrice)
+
+        // Condition filter
+        const matchesCondition = searchFilters.condition.length === 0 || searchFilters.condition.includes(product.condition)
+
+        // Brand filter
+        const matchesBrand = !searchFilters.brand || product.brand.toLowerCase().includes(searchFilters.brand.toLowerCase())
+
+        return matchesText && matchesCategory && matchesMinPrice && matchesMaxPrice && matchesCondition && matchesBrand
+      })
+
+      setSearchResults(filtered)
+      setIsSearching(false)
+      
+      if (filtered.length === 0) {
+        toast.info('No products found matching your search criteria')
+      } else {
+        toast.success(`Found ${filtered.length} product${filtered.length === 1 ? '' : 's'}`)
+      }
+    }, 500)
+  }
+
+  const clearSearch = () => {
+    setSearchQuery('')
+    setSearchFilters({
+      category: 'all',
+      minPrice: '',
+      maxPrice: '',
+      condition: [],
+      brand: ''
+    })
+    setSearchResults([])
+  }
+
+  const handleFilterChange = (filterType, value) => {
+    setSearchFilters(prev => {
+      if (filterType === 'condition') {
+        const newConditions = prev.condition.includes(value)
+          ? prev.condition.filter(c => c !== value)
+          : [...prev.condition, value]
+        return { ...prev, condition: newConditions }
+      }
+      return { ...prev, [filterType]: value }
+    })
+  }
+
+  // Expose search function to parent components
+  window.openSearch = () => setShowSearch(true)
+
+
 
   if (isLoading) {
     return (
@@ -638,6 +723,275 @@ const MainFeature = () => {
               {cart.reduce((total, item) => total + item.quantity, 0)}
             </span>
           </motion.button>
+          </motion.button>
+
+
+        {/* Search Modal */}
+        <AnimatePresence>
+          {showSearch && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-50"
+                onClick={() => setShowSearch(false)}
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-20"
+              >
+                <div className="bg-white dark:bg-surface-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-6 border-b border-surface-200 dark:border-surface-700">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-2xl font-semibold text-surface-900 dark:text-surface-100">Search Products</h3>
+                      <button
+                        onClick={() => setShowSearch(false)}
+                        className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-xl transition-colors"
+                      >
+                        <ApperIcon name="X" className="w-6 h-6 text-surface-600 dark:text-surface-400" />
+                      </button>
+                    </div>
+                    
+                    {/* Search Input */}
+                    <div className="relative mb-4">
+                      <ApperIcon name="Search" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                        placeholder="Search by name, brand, or description..."
+                        className="input-field pl-12 text-lg"
+                      />
+                    </div>
+                    
+                    {/* Search Filters */}
+                    <div className="space-y-4">
+                      {/* Category Filter */}
+                      <div>
+                        <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Category</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {categories.map((category) => (
+                            <button
+                              key={category.id}
+                              onClick={() => handleFilterChange('category', category.id)}
+                              className={`px-3 py-1 rounded-xl text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
+                                searchFilters.category === category.id
+                                  ? 'bg-primary text-white'
+                                  : 'bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600'
+                              }`}
+                            >
+                              <ApperIcon name={category.icon} className="w-3 h-3" />
+                              <span>{category.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Price Range */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Min Price</label>
+                          <input
+                            type="number"
+                            value={searchFilters.minPrice}
+                            onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                            placeholder="$0"
+                            className="input-field"
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Max Price</label>
+                          <input
+                            type="number"
+                            value={searchFilters.maxPrice}
+                            onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                            placeholder="$999"
+                            className="input-field"
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Condition Filter */}
+                      <div>
+                        <h4 className="text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">Condition</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {['Like New', 'Excellent', 'Good'].map((condition) => (
+                            <button
+                              key={condition}
+                              onClick={() => handleFilterChange('condition', condition)}
+                              className={`px-3 py-1 rounded-xl text-sm font-medium transition-colors ${
+                                searchFilters.condition.includes(condition)
+                                  ? 'bg-primary text-white'
+                                  : 'bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600'
+                              }`}
+                            >
+                              {condition}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Brand Filter */}
+                      <div>
+                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Brand</label>
+                        <input
+                          type="text"
+                          value={searchFilters.brand}
+                          onChange={(e) => handleFilterChange('brand', e.target.value)}
+                          placeholder="Enter brand name..."
+                          className="input-field"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Search Actions */}
+                    <div className="flex gap-3 mt-6">
+                      <button
+                        onClick={handleSearch}
+                        className="btn-primary flex-1"
+                      >
+                        <ApperIcon name="Search" className="w-5 h-5 mr-2" />
+                        Search Products
+                      </button>
+                      <button
+                        onClick={clearSearch}
+                        className="btn-outline"
+                      >
+                        <ApperIcon name="RotateCcw" className="w-5 h-5 mr-2" />
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Search Results */}
+                  <div className="p-6">
+                    {isSearching ? (
+                      <div className="text-center py-12">
+                        <div className="w-12 h-12 bg-gradient-to-r from-primary to-accent rounded-xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+                          <ApperIcon name="Search" className="w-6 h-6 text-white" />
+                        </div>
+                        <p className="text-surface-600 dark:text-surface-400">Searching products...</p>
+                      </div>
+                    ) : searchResults.length > 0 ? (
+                      <>
+                        <div className="flex items-center justify-between mb-6">
+                          <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">
+                            Search Results ({searchResults.length})
+                          </h4>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {searchResults.map((product) => (
+                            <motion.div
+                              key={product.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="card group cursor-pointer hover:shadow-card transition-all duration-300"
+                              onClick={() => {
+                                setSelectedProduct(product)
+                                setShowSearch(false)
+                              }}
+                            >
+                              <div className="relative overflow-hidden">
+                                <img
+                                  src={product.images[0]}
+                                  alt={product.name}
+                                  className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                                />
+                                <div className="absolute top-3 left-3">
+                                  <span className={`badge text-xs ${
+                                    product.condition === 'Like New' ? 'bg-green-100 text-green-800' :
+                                    product.condition === 'Excellent' ? 'bg-blue-100 text-blue-800' :
+                                    'bg-yellow-100 text-yellow-800'
+                                  }`}>
+                                    {product.condition}
+                                  </span>
+                                </div>
+                                <div className="absolute top-3 right-3">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      toggleWishlist(product)
+                                    }}
+                                    className={`p-2 rounded-full transition-colors ${
+                                      wishlist.find(item => item.id === product.id)
+                                        ? 'bg-accent text-white'
+                                        : 'bg-white/80 text-surface-600 hover:bg-white'
+                                    }`}
+                                  >
+                                    <ApperIcon name="Heart" className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                              
+                              <div className="p-4">
+                                <div className="flex justify-between items-start mb-2">
+                                  <h3 className="font-semibold text-surface-900 dark:text-surface-100 group-hover:text-primary transition-colors text-sm">
+                                    {product.name}
+                                  </h3>
+                                  <span className="text-lg font-bold text-primary">${product.price}</span>
+                                </div>
+                                
+                                <p className="text-surface-600 dark:text-surface-400 text-xs mb-3 line-clamp-2">
+                                  {product.description}
+                                </p>
+                                
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center space-x-3 text-xs text-surface-500 dark:text-surface-400">
+                                    <span>Size: {product.size}</span>
+                                    <span>Brand: {product.brand}</span>
+                                  </div>
+                                </div>
+                                
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    addToCart(product)
+                                  }}
+                                  className="btn-primary w-full text-sm py-2"
+                                >
+                                  <ApperIcon name="ShoppingCart" className="w-4 h-4 mr-1" />
+                                  Add to Cart
+                                </button>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </>
+                    ) : searchQuery || searchFilters.category !== 'all' || searchFilters.minPrice || searchFilters.maxPrice || searchFilters.condition.length > 0 || searchFilters.brand ? (
+                      <div className="text-center py-12">
+                        <ApperIcon name="SearchX" className="w-16 h-16 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
+                        <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">No results found</h4>
+                        <p className="text-surface-600 dark:text-surface-400 mb-4">Try adjusting your search criteria or clearing filters</p>
+                        <button
+                          onClick={clearSearch}
+                          className="btn-outline"
+                        >
+                          <ApperIcon name="RotateCcw" className="w-4 h-4 mr-2" />
+                          Clear Search
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <ApperIcon name="Search" className="w-16 h-16 text-surface-300 dark:text-surface-600 mx-auto mb-4" />
+                        <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">Start your search</h4>
+                        <p className="text-surface-600 dark:text-surface-400">Enter keywords or apply filters to find products</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         )}
       </div>
     </section>

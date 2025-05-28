@@ -47,9 +47,13 @@ const Home = () => {
                 <ApperIcon name={darkMode ? 'Sun' : 'Moon'} className="w-5 h-5 text-surface-700 dark:text-surface-300" />
               </button>
 
-              <button className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors relative">
+              <button 
+                onClick={() => window.openSearch && window.openSearch()}
+                className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors relative"
+              >
                 <ApperIcon name="Search" className="w-5 h-5 text-surface-700 dark:text-surface-300" />
               </button>
+
               <button className="p-2 rounded-xl bg-surface-100 dark:bg-surface-800 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors relative">
                 <ApperIcon name="Heart" className="w-5 h-5 text-surface-700 dark:text-surface-300" />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-white text-xs rounded-full flex items-center justify-center">
@@ -98,10 +102,14 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <button className="btn-primary w-full sm:w-auto">
+              <button 
+                onClick={() => window.openSearch && window.openSearch()}
+                className="btn-primary w-full sm:w-auto"
+              >
                 <ApperIcon name="Search" className="w-5 h-5 mr-2" />
                 Browse Collection
               </button>
+
               <button className="btn-outline w-full sm:w-auto">
                 <ApperIcon name="Play" className="w-5 h-5 mr-2" />
                 Watch Story

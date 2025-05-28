@@ -43,38 +43,44 @@ const DarkModeProvider = ({ children }) => {
 }
 
 
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 
 function App() {
-  return (
-    <DarkModeProvider>
-      <div className="min-h-screen bg-gradient-to-br from-surface-50 via-purple-50 to-orange-50 dark:from-surface-900 dark:via-purple-900 dark:to-orange-900 transition-colors duration-300">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-          className="mt-16"
-          toastClassName="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 shadow-soft"
-        />
-      </div>
-    </DarkModeProvider>
-  )
+    return (
+
+    <BrowserRouter>
+      <DarkModeProvider>
+        <div className="min-h-screen bg-gradient-to-br from-surface-50 via-purple-50 to-orange-50 dark:from-surface-900 dark:via-purple-900 dark:to-orange-900 transition-colors duration-300">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+            className="mt-16"
+            toastClassName="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 shadow-soft"
+          />
+        </div>
+      </DarkModeProvider>
+    </BrowserRouter>
+    )
 }
+
 
 
 export default App

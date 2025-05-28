@@ -70,17 +70,17 @@
   width: 8px;
 }
 
-:::-webkit-scrollbar-track {
+::webkit-scrollbar-track {
   @apply bg-surface-100 dark:bg-surface-800;
 
 }
 
-:::-webkit-scrollbar-thumb {
+::webkit-scrollbar-thumb {
   @apply bg-surface-300 dark:bg-surface-600 rounded-full;
 
 }
 
-:::-webkit-scrollbar-thumb:hover {
+::webkit-scrollbar-thumb:hover {
   @apply bg-surface-400 dark:bg-surface-500;
 
 }

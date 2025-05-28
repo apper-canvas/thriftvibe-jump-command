@@ -726,6 +726,7 @@ const MainFeature = () => {
           </motion.button>
 
 
+
         {/* Search Modal */}
         <AnimatePresence>
           {showSearch && (

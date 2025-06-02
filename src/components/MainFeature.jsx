@@ -716,18 +716,16 @@ const MainFeature = () => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className="fixed bottom-6 right-6 w-16 h-16 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-40"
-            onClick={() => setShowCart(true)}
+onClick={() => setShowCart(true)}
           >
             <ApperIcon name="ShoppingCart" className="w-6 h-6" />
             <span className="absolute -top-2 -right-2 w-6 h-6 bg-accent text-white text-xs rounded-full flex items-center justify-center">
               {cart.reduce((total, item) => total + item.quantity, 0)}
             </span>
           </motion.button>
-
-
+        )}
 
         {/* Search Modal */}
-        <AnimatePresence>
           {showSearch && (
             <>
               <motion.div

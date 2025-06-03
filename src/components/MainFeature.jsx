@@ -723,9 +723,10 @@ onClick={() => setShowCart(true)}
               {cart.reduce((total, item) => total + item.quantity, 0)}
             </span>
           </motion.button>
-        )}
+)}
 
         {/* Search Modal */}
+        <AnimatePresence>
           {showSearch && (
             <>
               <motion.div
